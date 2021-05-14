@@ -6,6 +6,8 @@ This implementation is written in [JAX](https://github.com/google/jax), and
 is a fork of Google's [JaxNeRF implementation](https://github.com/google-research/google-research/tree/master/jaxnerf).
 Contact [Jon Barron](https://jonbarron.info/) if you encounter any issues.
 
+![rays](https://user-images.githubusercontent.com/3310961/118305131-6ce86700-b49c-11eb-99b8-adcf276e9fe9.jpg)
+
 ## Abstract
 
 The rendering procedure used by neural radiance fields (NeRF) samples a scene
@@ -31,7 +33,7 @@ up the environment. Run the following commands:
 
 ```
 # Clone the repo
-svn export https://github.com/google-research/mipnerf/trunk
+git clone https://github.com/google/mipnerf.git
 # Create a conda environment, note you can use python 3.6-3.8 as
 # one of the dependencies (TensorFlow) hasn't supported python 3.9 yet.
 conda create --name mipnerf python=3.6.13; conda activate mipnerf
@@ -39,10 +41,15 @@ conda create --name mipnerf python=3.6.13; conda activate mipnerf
 conda install pip; pip install --upgrade pip
 # Install requirements
 pip install -r requirements.txt
-# [Optional] Install GPU and TPU support for Jax
+```
+
+[Optional] Install GPU and TPU support for Jax
+```
 # Remember to change cuda101 to your CUDA version, e.g. cuda110 for CUDA 11.0.
 pip install --upgrade jax jaxlib==0.1.65+cuda101 -f https://storage.googleapis.com/jax-releases/jax_releases.html
 ```
+
+## Data
 
 Then, you'll need to download the datasets
 from the [NeRF official Google Drive](https://drive.google.com/drive/folders/128yBriW1IG_3NJ5Rp7APSTZsJqdJdfc1).
