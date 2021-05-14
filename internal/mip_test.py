@@ -14,14 +14,15 @@
 
 # Lint as: python3
 """Unit tests for mip."""
+from absl.testing import absltest
 import jax
 from jax import random
 from jax import test_util as jtu
 import jax.numpy as jnp
 import numpy as np
-from google3.testing.pybase import googletest
-from google3.experimental.users.barron.mipnerf_rc.internal import math
-from google3.experimental.users.barron.mipnerf_rc.internal import mip
+
+from internal import math
+from internal import mip
 
 
 def surface_stats(points):
@@ -439,4 +440,4 @@ class MipUtilsTest(jtu.JaxTestCase):
 
 
 if __name__ == '__main__':
-  googletest.main()
+  absltest.main(testLoader=jtu.JaxTestLoader())

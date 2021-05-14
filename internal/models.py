@@ -22,8 +22,8 @@ import jax
 from jax import random
 import jax.numpy as jnp
 
-from google3.experimental.users.barron.mipnerf_rc.internal import mip
-from google3.experimental.users.barron.mipnerf_rc.internal import utils
+from internal import mip
+from internal import utils
 
 
 @gin.configurable

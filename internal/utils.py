@@ -25,20 +25,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from PIL import Image
-# BEGIN GOOGLE-INTERNAL
-from google3.pyglib import gfile
-# END GOOGLE-INTERNAL
 
-INTERNAL = False
-# BEGIN GOOGLE-INTERNAL
-INTERNAL = True
-# END GOOGLE-INTERNAL
-
-if INTERNAL:
-  gin.add_config_file_search_path(
-      'google3/experimental/users/barron/mipnerf_rc/')
-else:
-  gin.add_config_file_search_path('../')
+gin.add_config_file_search_path('../')
 
 
 gin.config.external_configurable(flax.nn.relu, module='flax.nn')
@@ -121,43 +109,23 @@ def load_config():
 
 
 def open_file(pth, mode='r'):
-  if not INTERNAL:
-    return open(pth, mode=mode)
-  # BEGIN GOOGLE-INTERNAL
-  return gfile.GFile(pth, mode=mode)
-  # END GOOGLE-INTERNAL
+  return open(pth, mode=mode)
 
 
 def file_exists(pth):
-  if not INTERNAL:
-    return path.exists(pth)
-  # BEGIN GOOGLE-INTERNAL
-  return gfile.Exists(pth)
-  # END GOOGLE-INTERNAL
+  return path.exists(pth)
 
 
 def listdir(pth):
-  if not INTERNAL:
-    return os.listdir(pth)
-  # BEGIN GOOGLE-INTERNAL
-  return gfile.ListDir(pth)
-  # END GOOGLE-INTERNAL
+  return os.listdir(pth)
 
 
 def isdir(pth):
-  if not INTERNAL:
-    return path.isdir(pth)
-  # BEGIN GOOGLE-INTERNAL
-  return gfile.IsDirectory(pth)
-  # END GOOGLE-INTERNAL
+  return path.isdir(pth)
 
 
 def makedirs(pth):
-  if not INTERNAL:
-    os.makedirs(pth)
-  # BEGIN GOOGLE-INTERNAL
-  gfile.MakeDirs(pth)
-  # END GOOGLE-INTERNAL
+  os.makedirs(pth)
 
 
 def namedtuple_map(fn, tup):

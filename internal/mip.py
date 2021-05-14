@@ -18,7 +18,8 @@
 from jax import lax
 from jax import random
 import jax.numpy as jnp
-from google3.experimental.users.barron.mipnerf_rc.internal import math
+
+from internal import math
 
 
 def pos_enc(x, min_deg, max_deg, append_identity=True):

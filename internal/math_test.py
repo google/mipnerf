@@ -16,6 +16,7 @@
 """Unit tests for math."""
 import functools
 
+from absl.testing import absltest
 import jax
 from jax import random
 from jax import test_util as jtu
@@ -23,8 +24,8 @@ import jax.numpy as jnp
 import numpy as np
 import scipy as sp
 import tensorflow as tf
-from google3.testing.pybase import googletest
-from google3.experimental.users.barron.mipnerf_rc.internal import math
+
+from internal import math
 
 
 def safe_trig_harness(fn, max_exp):
@@ -346,4 +347,4 @@ class MathUtilsTest(jtu.JaxTestCase):
 
 
 if __name__ == '__main__':
-  googletest.main()
+  absltest.main(testLoader=jtu.JaxTestLoader())
