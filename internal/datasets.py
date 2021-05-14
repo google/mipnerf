@@ -14,24 +14,16 @@
 
 # Lint as: python3
 """Different datasets implementation plus a general port for all the datasets."""
-INTERNAL = False  # pylint: disable=g-statement-before-imports
-# BEGIN GOOGLE-INTERNAL
-INTERNAL = True
-# END GOOGLE-INTERNAL
 import json
 import os
 from os import path
 import queue
 import threading
-if not INTERNAL:
-  import cv2  # pylint: disable=g-import-not-at-top
-# BEGIN GOOGLE-INTERNAL
-from cvx2 import latest as cv2  # pylint: disable=g-importing-member,g-import-not-at-top
-# END GOOGLE-INTERNAL
+import cv2
 import jax
 import numpy as np
 from PIL import Image
-from google3.experimental.users.barron.mipnerf_rc.internal import utils
+from internal import utils
 
 
 def get_dataset(split, train_dir, config):

@@ -14,17 +14,15 @@
 # limitations under the License.
 
 # Script for evaluating on the multiscale Blender dataset.
-export CUDA_VISIBLE_DEVICES=0
 
 SCENE=lego
 EXPERIMENT=debug
-TRAIN_DIR=/usr/local/google/home/barron/tmp/nerf_results/$EXPERIMENT/$SCENE
-DATA_DIR=/usr/local/google/home/barron/tmp/nerf_data/down4/$SCENE
+TRAIN_DIR=/Users/barron/tmp/nerf_results/$EXPERIMENT/$SCENE
+DATA_DIR=/Users/barron/data/down4/$SCENE
 
-blaze run -c opt --config=cuda eval --experimental_deps_ok -- \
+python -m eval \
   --data_dir=$DATA_DIR \
   --train_dir=$TRAIN_DIR \
   --chunk=3076 \
   --gin_file=configs/multiblender.gin \
-  --gin_param="Config.test_render_interval = 1" \
   --logtostderr

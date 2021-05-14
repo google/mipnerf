@@ -25,17 +25,12 @@ from flax.training import checkpoints
 import jax
 from jax import random
 import numpy as np
-import tensorflow as tf
-import tensorflow_hub as tf_hub
 
-from google3.experimental.users.barron.mipnerf_rc.internal import datasets
-from google3.experimental.users.barron.mipnerf_rc.internal import math
-from google3.experimental.users.barron.mipnerf_rc.internal import models
-from google3.experimental.users.barron.mipnerf_rc.internal import utils
-from google3.experimental.users.barron.mipnerf_rc.internal import vis
-# BEGIN GOOGLE-INTERNAL
-import google3.learning.deepmind.xmanager2.client.google as xm  # pylint: disable=unused-import
-# END GOOGLE-INTERNAL
+from internal import datasets
+from internal import math
+from internal import models
+from internal import utils
+from internal import vis
 
 FLAGS = flags.FLAGS
 utils.define_common_flags()
@@ -46,23 +41,8 @@ flags.DEFINE_bool(
 flags.DEFINE_bool('save_output', True,
                   'If True, save predicted images to disk.')
 
-LPIPS_TFHUB_PATH = '@spectra/metrics/lpips/net-lin_vgg_v0.1/4'
-
-
-def compute_lpips(image1, image2, model):
-  """Compute the LPIPS metric."""
-  # The LPIPS model expects a batch dimension.
-  return model(
-      tf.convert_to_tensor(image1[None, ...]),
-      tf.convert_to_tensor(image2[None, ...]))[0]
-
 
 def main(unused_argv):
-  # Hide the GPUs and TPUs from TF so it does not reserve memory on them for
-  # LPIPS computation or dataset loading.
-  tf.config.experimental.set_visible_devices([], 'GPU')
-  tf.config.experimental.set_visible_devices([], 'TPU')
-
   config = utils.load_config()
 
   dataset = datasets.get_dataset('test', FLAGS.data_dir, config)
@@ -71,8 +51,6 @@ def main(unused_argv):
   optimizer = flax.optim.Adam(config.lr_init).create(init_variables)
   state = utils.TrainState(optimizer=optimizer)
   del optimizer, init_variables
-
-  lpips_model = tf_hub.load(LPIPS_TFHUB_PATH)
 
   # Rendering is forced to be deterministic even if training was randomized, as
   # this eliminates 'speckle' artifacts.
@@ -95,8 +73,6 @@ def main(unused_argv):
   )
 
   ssim_fn = jax.jit(functools.partial(math.compute_ssim, max_val=1.))
-  # TODO(barron): Use a JAX implementation.
-  lpips_fn = functools.partial(compute_lpips, model=lpips_model)
 
   last_step = 0
   out_dir = path.join(FLAGS.train_dir,
@@ -113,7 +89,6 @@ def main(unused_argv):
       utils.makedirs(out_dir)
     psnr_values = []
     ssim_values = []
-    lpips_values = []
     avg_values = []
     if not FLAGS.eval_once:
       showcase_index = random.randint(random.PRNGKey(step), (), 0, dataset.size)
@@ -140,13 +115,9 @@ def main(unused_argv):
         psnr = float(
             math.mse_to_psnr(((pred_color - batch['pixels'])**2).mean()))
         ssim = float(ssim_fn(pred_color, batch['pixels']))
-        lpips = float(lpips_fn(pred_color, batch['pixels']))
-        avg = float(math.compute_avg_error(psnr=psnr, ssim=ssim, lpips=lpips))
-        print(f'PSNR={psnr:.4f} SSIM={ssim:.4f} LPIPS={lpips:.4f} | {avg:0.4f}')
+        print(f'PSNR={psnr:.4f} SSIM={ssim:.4f}')
         psnr_values.append(psnr)
         ssim_values.append(ssim)
-        lpips_values.append(lpips)
-        avg_values.append(avg)
       if FLAGS.save_output and (config.test_render_interval > 0):
         if (idx % config.test_render_interval) == 0:
           utils.save_img_uint8(
@@ -167,18 +138,12 @@ def main(unused_argv):
       if not config.render_path:
         summary_writer.scalar('psnr', np.mean(np.array(psnr_values)), step)
         summary_writer.scalar('ssim', np.mean(np.array(ssim_values)), step)
-        summary_writer.scalar('lpips', np.mean(np.array(lpips_values)), step)
-        summary_writer.scalar('avg_error', np.mean(np.array(avg_values)), step)
         summary_writer.image('target', showcase_gt, step)
     if FLAGS.save_output and (not config.render_path) and (jax.host_id() == 0):
       with utils.open_file(path.join(out_dir, f'psnrs_{step}.txt'), 'w') as f:
         f.write(' '.join([str(v) for v in psnr_values]))
       with utils.open_file(path.join(out_dir, f'ssims_{step}.txt'), 'w') as f:
         f.write(' '.join([str(v) for v in ssim_values]))
-      with utils.open_file(path.join(out_dir, f'lpips_{step}.txt'), 'w') as f:
-        f.write(' '.join([str(v) for v in lpips_values]))
-      with utils.open_file(path.join(out_dir, f'avgerr_{step}.txt'), 'w') as f:
-        f.write(' '.join([str(v) for v in avg_values]))
     if FLAGS.eval_once:
       break
     if int(step) >= config.max_steps:

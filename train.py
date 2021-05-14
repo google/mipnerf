@@ -28,14 +28,12 @@ from jax import random
 import jax.numpy as jnp
 import numpy as np
 
-from google3.experimental.users.barron.mipnerf_rc.internal import datasets
-from google3.experimental.users.barron.mipnerf_rc.internal import math
-from google3.experimental.users.barron.mipnerf_rc.internal import models
-from google3.experimental.users.barron.mipnerf_rc.internal import utils
-from google3.experimental.users.barron.mipnerf_rc.internal import vis
-# BEGIN GOOGLE-INTERNAL
-import google3.learning.deepmind.xmanager2.client.google as xm  # pylint: disable=unused-import
-# END GOOGLE-INTERNAL
+from internal import datasets
+from internal import math
+from internal import models
+from internal import utils
+from internal import vis
+
 
 FLAGS = flags.FLAGS
 utils.define_common_flags()

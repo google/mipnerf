@@ -14,15 +14,14 @@
 # limitations under the License.
 
 # Script for training on the multiscale Blender dataset.
-export CUDA_VISIBLE_DEVICES=0
 
 SCENE=lego
 EXPERIMENT=debug
-TRAIN_DIR=/usr/local/google/home/barron/tmp/nerf_results/$EXPERIMENT/$SCENE
-DATA_DIR=/usr/local/google/home/barron/tmp/nerf_data/down4/$SCENE
+TRAIN_DIR=/Users/barron/tmp/nerf_results/$EXPERIMENT/$SCENE
+DATA_DIR=/Users/barron/data/down4/$SCENE
 
 rm $TRAIN_DIR/*
-blaze run -c opt --config=cuda --experimental_deps_ok train -- \
+python -m train \
   --data_dir=$DATA_DIR \
   --train_dir=$TRAIN_DIR \
   --gin_file=configs/multiblender.gin \

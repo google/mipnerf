@@ -1,4 +1,3 @@
-Config.test_render_interval = 0
 MipNerfModel.density_activation = @flax.nn.relu
 MipNerfModel.density_bias = 0.0
 MipNerfModel.rgb_padding = 0.0

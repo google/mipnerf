@@ -14,17 +14,15 @@
 # limitations under the License.
 
 # Script for evaluating on the LLFF dataset.
-export CUDA_VISIBLE_DEVICES=0
 
 SCENE=trex
 EXPERIMENT=debug
-TRAIN_DIR=/usr/local/google/home/barron/tmp/nerf_results/$EXPERIMENT/$SCENE
-DATA_DIR=/usr/local/google/home/barron/tmp/nerf_data/nerf_llff_data/$SCENE
+TRAIN_DIR=/Users/barron/tmp/nerf_results/$EXPERIMENT/$SCENE
+DATA_DIR=/Users/barron/data/nerf_llff_data/$SCENE
 
-blaze run -c opt --config=cuda eval --experimental_deps_ok -- \
+python -m eval \
   --data_dir=$DATA_DIR \
   --train_dir=$TRAIN_DIR \
   --chunk=3076 \
   --gin_file=configs/llff.gin \
-  --gin_param="Config.test_render_interval = 1" \
   --logtostderr
