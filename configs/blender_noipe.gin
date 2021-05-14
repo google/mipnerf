@@ -1,0 +1,4 @@
+Config.dataset_loader = 'blender'
+Config.batching = 'single_image'
+Config.test_render_interval = 0
+MipNerfModel.disable_integration = True

@@ -1,0 +1,10 @@
+numpy>=1.16.4,<1.19.0
+jax>=0.2.12
+jaxlib>=0.1.65
+flax>=0.2.2
+opencv-python>=4.4.0
+Pillow>=7.2.0
+tensorboard>=2.4.0
+tensorflow>=2.3.1
+tensorflow-hub>=0.11.0
+gin

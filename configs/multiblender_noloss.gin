@@ -1,0 +1,2 @@
+Config.disable_multiscale_loss = True
+Config.test_render_interval = 0

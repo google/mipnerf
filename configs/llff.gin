@@ -1,0 +1,10 @@
+Config.dataset_loader = 'llff'
+Config.white_bkgd = False
+Config.randomized = True
+Config.near = 0.
+Config.far = 1.
+Config.factor = 4
+Config.llffhold = 8
+MipNerfModel.use_viewdirs = True
+MipNerfModel.ray_shape = 'cylinder'
+MipNerfModel.density_noise = 1.

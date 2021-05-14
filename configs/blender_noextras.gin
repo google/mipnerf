@@ -1,0 +1,6 @@
+Config.dataset_loader = 'blender'
+Config.batching = 'single_image'
+MipNerfModel.density_activation = @flax.nn.relu
+MipNerfModel.density_bias = 0.0
+MipNerfModel.rgb_padding = 0.0
+Config.test_render_interval = 0

@@ -1,0 +1,2 @@
+Config.test_render_interval = 0
+MipNerfModel.disable_integration = True
