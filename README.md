@@ -33,7 +33,7 @@ up the environment. Run the following commands:
 
 ```
 # Clone the repo
-git clone https://github.com/google/mipnerf.git
+git clone https://github.com/google/mipnerf.git; cd mipnerf
 # Create a conda environment, note you can use python 3.6-3.8 as
 # one of the dependencies (TensorFlow) hasn't supported python 3.9 yet.
 conda create --name mipnerf python=3.6.13; conda activate mipnerf
@@ -55,7 +55,11 @@ Then, you'll need to download the datasets
 from the [NeRF official Google Drive](https://drive.google.com/drive/folders/128yBriW1IG_3NJ5Rp7APSTZsJqdJdfc1).
 Please download and unzip `nerf_synthetic.zip` and `nerf_llff_data.zip`.
 
-TODO(bmild): Add instructions for synthesizing the multiscale Blender dataset.
+### Generate multiscale dataset
+You can generate the multiscale dataset used in the paper by running the following command,
+```
+python convert_blender_data.py --blenderdir /nerf_synthetic --outdir /multiscale
+```
 
 ## Running
 
@@ -68,6 +72,12 @@ An example script for evaluating on the test set of each scene can be found
 in `scripts/`, after which you can use `scripts/summarize.ipynb` to produce
 error metrics across all scenes in the same format as was used in tables in the
 paper.
+
+### OOM errors
+You may need to reduce the batch size to avoid out of memory errors. For example the model can be run on a NVIDIA 3080 (10Gb) using the following flag. 
+```
+--gin_param="Config.batch_size = 1024"
+```
 
 ## Citation
 If you use this software package, please cite our paper:
