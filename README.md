@@ -58,7 +58,7 @@ Please download and unzip `nerf_synthetic.zip` and `nerf_llff_data.zip`.
 ### Generate multiscale dataset
 You can generate the multiscale dataset used in the paper by running the following command,
 ```
-python convert_blender_data.py --blenderdir /nerf_synthetic --outdir /multiscale
+python scripts/convert_blender_data.py --blenderdir /nerf_synthetic --outdir /multiscale
 ```
 
 ## Running
