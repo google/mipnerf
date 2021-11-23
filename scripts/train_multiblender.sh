@@ -18,11 +18,14 @@
 SCENE=lego
 EXPERIMENT=debug
 TRAIN_DIR=/Users/barron/tmp/nerf_results/$EXPERIMENT/$SCENE
+# TRAIN_DIR=/home/akashsharma/tmp/nerf_results/$EXPERIMENT/$SCENE
 DATA_DIR=/Users/barron/data/down4/$SCENE
+# DATA_DIR=/home/akashsharma/Documents/datasets/multiscale/$SCENE
 
 rm $TRAIN_DIR/*
 python -m train \
   --data_dir=$DATA_DIR \
   --train_dir=$TRAIN_DIR \
   --gin_file=configs/multiblender.gin \
-  --logtostderr
+  --logtostderr \
+  --gin_param="Config.batch_size = 1024"

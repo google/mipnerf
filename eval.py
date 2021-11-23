@@ -103,7 +103,7 @@ def main(unused_argv):
 
       vis_suite = vis.visualize_suite(pred_distance, pred_acc)
 
-      if jax.host_id() != 0:  # Only record via host 0.
+      if jax.process_index() != 0:  # Only record via host 0.
         continue
       if not FLAGS.eval_once and idx == showcase_index:
         showcase_color = pred_color

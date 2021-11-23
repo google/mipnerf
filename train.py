@@ -148,11 +148,10 @@ def main(unused_argv):
   rng = random.PRNGKey(20200823)
   # Shift the numpy random seed by host_id() to shuffle data loaded by different
   # hosts.
-  np.random.seed(20201473 + jax.host_id())
+  np.random.seed(20201473 + jax.process_index())
 
   config = utils.load_config()
-
-  if config.batch_size % jax.device_count() != 0:
+  if config.batch_size % jax.process_count() != 0:
     raise ValueError('Batch size must be divisible by the number of devices.')
 
   dataset = datasets.get_dataset('train', FLAGS.data_dir, config)
@@ -160,6 +159,7 @@ def main(unused_argv):
 
   rng, key = random.split(rng)
   model, variables = models.construct_mipnerf(key, dataset.peek())
+  print("Loaded model")
   num_params = jax.tree_util.tree_reduce(
       lambda x, y: x + jnp.prod(jnp.array(y.shape)), variables, initializer=0)
   print(f'Number of parameters being optimized: {num_params}')
@@ -208,12 +208,12 @@ def main(unused_argv):
   init_step = state.optimizer.state.step + 1
   state = flax.jax_utils.replicate(state)
 
-  if jax.host_id() == 0:
+  if jax.process_index() == 0:
     summary_writer = tensorboard.SummaryWriter(FLAGS.train_dir)
 
   # Prefetch_buffer_size = 3 x batch_size
   pdataset = flax.jax_utils.prefetch_to_device(dataset, 3)
-  rng = rng + jax.host_id()  # Make random seed separate across hosts.
+  rng = rng + jax.process_index()  # Make random seed separate across hosts.
   keys = random.split(rng, jax.local_device_count())  # For pmapping RNG keys.
   gc.disable()  # Disable automatic garbage collection for efficiency.
   stats_trace = []
@@ -224,7 +224,7 @@ def main(unused_argv):
       reset_timer = False
     lr = learning_rate_fn(step)
     state, stats, keys = train_pstep(keys, state, batch, lr)
-    if jax.host_id() == 0:
+    if jax.process_index() == 0:
       stats_trace.append(stats)
     if step % config.gc_every == 0:
       gc.collect()
@@ -232,7 +232,7 @@ def main(unused_argv):
     # Log training summaries. This is put behind a host_id check because in
     # multi-host evaluation, all hosts need to run inference even though we
     # only use host 0 to record results.
-    if jax.host_id() == 0:
+    if jax.process_index() == 0:
       if step % config.print_every == 0:
         summary_writer.scalar('num_params', num_params, step)
         summary_writer.scalar('train_loss', stats.loss[0], step)
@@ -295,7 +295,7 @@ def main(unused_argv):
       vis_suite = vis.visualize_suite(pred_distance, pred_acc)
 
       # Log eval summaries on host 0.
-      if jax.host_id() == 0:
+      if jax.process_index() == 0:
         psnr = math.mse_to_psnr(((pred_color - test_case['pixels'])**2).mean())
         ssim = ssim_fn(pred_color, test_case['pixels'])
         eval_time = time.time() - t_eval_start

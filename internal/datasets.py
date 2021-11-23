@@ -72,7 +72,7 @@ class Dataset(threading.Thread):
       raise ValueError(
           'the split argument should be either \'train\' or \'test\', set'
           'to {} here.'.format(split))
-    self.batch_size = config.batch_size // jax.host_count()
+    self.batch_size = config.batch_size // jax.process_count()
     self.batching = config.batching
     self.render_path = config.render_path
     self.start()
@@ -149,7 +149,7 @@ class Dataset(threading.Thread):
       batch_rays = utils.namedtuple_map(lambda r: r[ray_indices], self.rays)
     elif self.batching == 'single_image':
       image_index = np.random.randint(0, self.n_examples, ())
-      ray_indices = np.random.randint(0, self.rays[0][0].shape[0],
+      ray_indices = np.random.randint(0, self.rays[0][image_index].shape[0],
                                       (self.batch_size,))
       batch_pixels = self.images[image_index][ray_indices]
       batch_rays = utils.namedtuple_map(lambda r: r[image_index][ray_indices],
